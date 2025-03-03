@@ -1,0 +1,10 @@
+{
+  "name": "Blynclight Embrava",
+  "version": "1.0.0",
+  "domain": "blynclight",
+  "documentation": "https://github.com/yourusername/blynclight-ha-embrava",
+  "dependencies": [],
+  "codeowners": ["@yourusername"],
+  "requirements": ["aiohttp>=3.8.0"],
+  "iot_class": "local_push"
+}
