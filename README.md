@@ -14,8 +14,6 @@ Controls a Blynclight Plus device in Home Assistant via Embrava Connect hotkeys 
 ## Prerequisites
 - **Windows PC**: Running Embrava Connect with a Blynclight Plus connected via USB.
 - **Home Assistant**: With HACS installed for custom integrations.
-- **GitHub Account**: To host the repository (e.g., `oywino/blynclight-ha-embrava`).
-- **GitHub Desktop**: For managing the repository on Windows.
 
 ## Installation
 
@@ -23,25 +21,17 @@ Controls a Blynclight Plus device in Home Assistant via Embrava Connect hotkeys 
 1. **Configure Embrava Connect**:
    - Install Embrava Connect and ensure it runs as a service.
    - Set hotkeys: `Ctrl+Alt+R` (Red), `Ctrl+Alt+G` (Green), `Ctrl+Alt+B` (Blue), `Ctrl+Alt+O` (Off).
-   - Test hotkeys manually.
-2. **Create PowerShell HTTP Server**:
-   - Script saved as `C:\Users\Public\Blynclight\blynclight_control.ps1` (see full guide for code).
-   - Runs on `http://localhost:5000`, maps actions to hotkeys.
-3. **Enable Script Execution**:
-   - Run in PowerShell (Admin): `Set-ExecutionPolicy -Scope LocalMachine -ExecutionPolicy RemoteSigned -Force`.
-4. **Set Up Task Scheduler**:
-   - Task: `BlynclightControl`, runs `powershell.exe -WindowStyle Hidden -ExecutionPolicy Bypass -File C:\Users\Public\Blynclight\blynclight_control.ps1` at startup with 1-minute delay.
-5. **Allow Firewall Access**:
-   - Run in PowerShell (Admin): `New-NetFirewallRule -DisplayName "Blynclight Control" -Direction Inbound -Protocol TCP -LocalPort 5000 -Action Allow`.
-6. **Test**:
-   - Reboot, test with `curl -X POST http://localhost:5000 -H "Content-Type: application/json" -d "{\"action\":\"red\"}"`.
+   - Test hotkeys manually to confirm color changes.
+2. **Set Up PowerShell HTTP Server**:
+   - Requires a script running on `http://localhost:5000` to map actions (`"red"`, `"green"`, `"blue"`, `"off"`) to hotkeys. See detailed setup in the [full guide](https://github.com/oywino/blynclight-ha-embrava/wiki).
+   - Test with: `curl -X POST http://localhost:5000 -H "Content-Type: application/json" -d "{\"action\":\"red\"}"`.
 
 ### Part 2: Install via HACS
 1. **Add Repository**:
-   - HACS > Integrations > “+ Explore & Add Repositories” > `https://github.com/oywino/blynclight-ha-embrava` > “Add”.
-   - Click “Blynclight Embrava” > “DOWNLOAD” > Restart HA.
+   - In HACS: Integrations > “+ Explore & Add Repositories” > Enter `https://github.com/oywino/blynclight-ha-embrava` > “Add”.
+   - Click “Blynclight Embrava” > “DOWNLOAD” > Restart Home Assistant.
 2. **Configure**:
-   - Devices & Services > “+ Add Integration” > “Blynclight Embrava” > Host: `http://192.168.1.x:5000` > Submit.
+   - In HA: Devices & Services > “+ Add Integration” > Search “Blynclight Embrava” > Set Host to `http://<your-windows-ip>:5000` (e.g., `http://192.168.1.x:5000`) > Submit.
 
 ## Usage
 - **Entity**: `select.blynclight`
@@ -49,7 +39,7 @@ Controls a Blynclight Plus device in Home Assistant via Embrava Connect hotkeys 
 - **Action**: Select an option to change the Blynclight state.
 
 ## License
-MIT License - see [LICENSE](LICENSE) file for details. (Add a `LICENSE` file if sharing publicly.)
+MIT License - see [LICENSE](LICENSE) file for details.
 
 ## Support
 Post questions or issues on the [HA Community Forum](https://community.home-assistant.io/) or [GitHub Issues](https://github.com/oywino/blynclight-ha-embrava/issues).
