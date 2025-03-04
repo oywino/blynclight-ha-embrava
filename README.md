@@ -26,6 +26,7 @@ Controls a Blynclight Plus device in Home Assistant via Embrava Connect hotkeys 
 
 #### Step 2: Set Up PowerShell HTTP Server
 - Open Notepad, paste the following script, and save as `C:\Users\Public\Blynclight\blynclight_control.ps1`:
+
 ```powershell
 Add-Type @"
 using System;
