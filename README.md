@@ -123,10 +123,11 @@ Set-ExecutionPolicy -Scope LocalMachine -ExecutionPolicy RemoteSigned -Force
 - Save with admin credentials.
 
 #### Step 5: Allow Firewall Access
-- In PowerShell (Admin):
+- In PowerShell (Admin), run:
 ```powershell
-New-NetFirewallRule -DisplayName "Blynclight Control" -Direction Inbound -Protocol TCP -LocalPort 5000 -
+New-NetFirewallRule -DisplayName "Blynclight Control" -Direction Inbound -Protocol TCP -LocalPort 5000 -Action Allow
 ```
+- Notes: This opens port 5000 for the PowerShell HTTP server.
 
 #### Step 6: Test Server
 - Reboot PC, wait 1-2 minutes, test:
