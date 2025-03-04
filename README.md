@@ -26,7 +26,7 @@ Controls a Blynclight Plus device in Home Assistant via Embrava Connect hotkeys 
 
 #### Step 2: Set Up PowerShell HTTP Server
 - Open Notepad, paste the following script, and save as `C:\Users\Public\Blynclight\blynclight_control.ps1`:
-\\\```powershell
+```powershell
 Add-Type @"
 using System;
 using System.Runtime.InteropServices;
@@ -104,14 +104,14 @@ try {
 } finally {
     $listener.Stop()
 }
-\\\```
+```
 - Notes: This script runs an HTTP server on port 5000, mapping `"red"`, `"green"`, `"blue"`, `"off"` to the hotkeys set in Embrava Connect.
 
 #### Step 3: Enable Script Execution
 - Open PowerShell as Administrator and run:
-\\\```powershell
+```powershell
 Set-ExecutionPolicy -Scope LocalMachine -ExecutionPolicy RemoteSigned -Force
-\\\```
+```
 
 #### Step 4: Configure Task Scheduler
 - Open Task Scheduler > “Create Task”:
@@ -124,15 +124,14 @@ Set-ExecutionPolicy -Scope LocalMachine -ExecutionPolicy RemoteSigned -Force
 
 #### Step 5: Allow Firewall Access
 - In PowerShell (Admin):
-\\\```powershell
-New-NetFirewallRule -DisplayName "Blynclight Control" -Direction Inbound -Protocol TCP -LocalPort 5000 -Action Allow
-\\\```
+```powershell
+New-NetFirewallRule -DisplayName "Blynclight Control" -Direction Inbound -Protocol TCP -LocalPort 5000 -```
 
 #### Step 6: Test Server
 - Reboot PC, wait 1-2 minutes, test:
-\\\```cmd
+```cmd
 curl -X POST http://localhost:5000 -H "Content-Type: application/json" -d "{\"action\":\"red\"}"
-\\\```
+```
 - Verify all actions: `"red"`, `"green"`, `"blue"`, `"off"`.
 
 ### Part 2: Install via HACS
