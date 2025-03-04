@@ -10,6 +10,7 @@ Controls a Blynclight Plus device in Home Assistant via Embrava Connect hotkeys 
 - Simple dropdown control in Lovelace (`select.blynclight`).
 - Local communication via PowerShell HTTP server.
 - No external dependencies beyond `aiohttp`.
+- Custom icon in Devices & Services view (pending approval).
 
 ## Prerequisites
 - **Windows PC**: Running Embrava Connect with a Blynclight Plus connected via USB.
@@ -155,4 +156,4 @@ MIT License - see [LICENSE](LICENSE) file for details.
 Post questions or issues on the [HA Community Forum](https://community.home-assistant.io/) or [GitHub Issues](https://github.com/oywino/blynclight-ha-embrava/issues).
 
 [forum-shield]: https://img.shields.io/badge/community-forum-brightgreen.svg?style=popout
-[forum]: https://community.home-assistant.io/
+[forum]: https://community.home-assistant
