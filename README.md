@@ -1,4 +1,3 @@
-```markdown
 # Blynclight Embrava
 [![HACS Badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
 ![Version](https://img.shields.io/github/v/release/oywino/blynclight-ha-embrava)
@@ -57,4 +56,3 @@ Post questions or issues on the [HA Community Forum](https://community.home-assi
 
 [forum-shield]: https://img.shields.io/badge/community-forum-brightgreen.svg?style=popout
 [forum]: https://community.home-assistant.io/
-```
