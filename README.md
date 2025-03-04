@@ -125,7 +125,8 @@ Set-ExecutionPolicy -Scope LocalMachine -ExecutionPolicy RemoteSigned -Force
 #### Step 5: Allow Firewall Access
 - In PowerShell (Admin):
 ```powershell
-New-NetFirewallRule -DisplayName "Blynclight Control" -Direction Inbound -Protocol TCP -LocalPort 5000 -```
+New-NetFirewallRule -DisplayName "Blynclight Control" -Direction Inbound -Protocol TCP -LocalPort 5000 -
+```
 
 #### Step 6: Test Server
 - Reboot PC, wait 1-2 minutes, test:
