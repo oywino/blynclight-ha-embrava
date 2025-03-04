@@ -1,5 +1,5 @@
 import aiohttp
-from homeassistant.components.light import LightEntity, SUPPORT_COLOR
+from homeassistant.components.light import LightEntity, COLOR_MODE_RGB, ATTR_RGB_COLOR
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.const import STATE_ON, STATE_OFF
@@ -24,16 +24,9 @@ class BlyncLightEntity(LightEntity):
         self._host = host
         self._state = STATE_OFF
         self._rgb_color = (0, 0, 0)
-        self._unique_id = f"blynclight_{entry_id}"
-        self._name = "Blynclight"
-
-    @property
-    def name(self):
-        return self._name
-
-    @property
-    def unique_id(self):
-        return self._unique_id
+        self._attr_unique_id = f"blynclight_{entry_id}"
+        self._attr_name = "Blynclight"
+        self._attr_supported_color_modes = {COLOR_MODE_RGB}
 
     @property
     def is_on(self):
@@ -43,14 +36,10 @@ class BlyncLightEntity(LightEntity):
     def rgb_color(self):
         return self._rgb_color
 
-    @property
-    def supported_features(self):
-        return SUPPORT_COLOR
-
     async def async_turn_on(self, **kwargs):
         async with aiohttp.ClientSession() as session:
-            if "rgb_color" in kwargs:
-                r, g, b = kwargs["rgb_color"]
+            if ATTR_RGB_COLOR in kwargs:
+                r, g, b = kwargs[ATTR_RGB_COLOR]
                 action = RGB_TO_ACTION.get((r, g, b), "blue")
             else:
                 action = "blue"
@@ -58,6 +47,7 @@ class BlyncLightEntity(LightEntity):
             await session.post(self._host, json=data)
             self._state = STATE_ON
             self._rgb_color = ACTION_TO_RGB.get(action, (0, 0, 150))
+            self.async_write_ha_state()
 
     async def async_turn_off(self, **kwargs):
         async with aiohttp.ClientSession() as session:
@@ -65,6 +55,7 @@ class BlyncLightEntity(LightEntity):
             await session.post(self._host, json=data)
             self._state = STATE_OFF
             self._rgb_color = (0, 0, 0)
+            self.async_write_ha_state()
 
     async def async_update(self):
         pass
