@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## [v0.2.1](https://github.com/oywino/blynclight-ha-embrava/releases/tag/v0.2.1) - 2025-04-02 22:12:43
+## [v0.2.2](https://github.com/oywino/blynclight-ha-embrava/releases/tag/v0.2.2) - 2025-04-02 22:24:24
 
 ## What's Changed
 
@@ -9,6 +9,8 @@
 ## Installation & Update Notes
 - After updating, restart Home Assistant
 - No configuration changes required
+
+## [v0.2.1](https://github.com/oywino/blynclight-ha-embrava/releases/tag/v0.2.1) - 2025-04-02 22:12:43
 
 ## [v0.2.0](https://github.com/oywino/blynclight-ha-embrava/releases/tag/v0.2.0) - 2025-04-02 21:28:31
 
