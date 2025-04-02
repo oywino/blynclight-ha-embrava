@@ -6,7 +6,7 @@ on:
       - main
 
 permissions:
-  contents: write  # Grants write access to repository contents (e.g., pushing commits)
+  contents: write  # Grants write access to repository contents
 
 jobs:
   release:
@@ -27,7 +27,7 @@ jobs:
           version_format: "${major}.${minor}.${patch}"
           search_commit_body: true
 
-      - name: Check Current Version in manifest.json
+      - name: Check if manifest.json version needs updating
         id: check_manifest
         run: |
           MANIFEST_VERSION=$(grep -o '"version": "[^"]*' custom_components/blynclight/manifest.json | cut -d'"' -f4)
@@ -38,11 +38,12 @@ jobs:
             echo "new_version=$SEMANTIC_VERSION" >> $GITHUB_OUTPUT
           else
             echo "update_needed=false" >> $GITHUB_OUTPUT
+          fi
 
       - name: Update and Commit manifest.json
         if: steps.check_manifest.outputs.update_needed == 'true'
         run: |
-          sed -i 's/"version": "${{ steps.check_manifest.outputs.old_version }}"/"version": "${{ steps.check_manifest.outputs.new_version }}"/' custom_components/blynclight/manifest.json
+          sed -i 's/"version": "[^"]*"/"version": "${{ steps.check_manifest.outputs.new_version }}"/' custom_components/blynclight/manifest.json
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add custom_components/blynclight/manifest.json
@@ -51,7 +52,7 @@ jobs:
 
       - name: Wait for Commit to Sync
         if: steps.check_manifest.outputs.update_needed == 'true'
-        run: sleep 10  # Optional: Wait to ensure push is fully processed
+        run: sleep 10
 
       - name: Create Tag
         run: |
