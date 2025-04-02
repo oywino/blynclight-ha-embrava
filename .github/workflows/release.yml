@@ -7,7 +7,6 @@ on:
 
 permissions:
   contents: write  # Grants write access to repository contents (e.g., pushing commits)
-  pull-requests: write  # Optional: useful if you later adapt this to create PRs
 
 jobs:
   release:
@@ -17,7 +16,6 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}  # Explicitly use GITHUB_TOKEN for checkout
 
       - name: Determine Version
         id: semantic
@@ -29,28 +27,21 @@ jobs:
           version_format: "${major}.${minor}.${patch}"
           search_commit_body: true
 
-      - name: Check if manifest.json version needs updating
-        id: check_manifest
-        run: |
-          MANIFEST_VERSION=$(grep -o '"version": "[^"]*' custom_components/blynclight/manifest.json | cut -d'"' -f4)
-          SEMANTIC_VERSION="${{ steps.semantic.outputs.version }}"
-          if [ "$MANIFEST_VERSION" != "$SEMANTIC_VERSION" ]; then
-            echo "update_needed=true" >> $GITHUB_OUTPUT
-            echo "old_version=$MANIFEST_VERSION" >> $GITHUB_OUTPUT
-            echo "new_version=$SEMANTIC_VERSION" >> $GITHUB_OUTPUT
-          else
-            echo "update_needed=false" >> $GITHUB_OUTPUT
-          fi
-
       - name: Update manifest.json version
-        if: steps.check_manifest.outputs.update_needed == 'true'
         run: |
-          sed -i 's/"version": "${{ steps.check_manifest.outputs.old_version }}"/"version": "${{ steps.check_manifest.outputs.new_version }}"/g' custom_components/blynclight/manifest.json
+          VERSION="${{ steps.semantic.outputs.version }}"
+          sed -i 's/"version": "[^"]*"/"version": "'"$VERSION"'"/' custom_components/blynclight/manifest.json
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add custom_components/blynclight/manifest.json
-          git commit -m "chore: update version to ${{ steps.check_manifest.outputs.new_version }}"
+          git commit -m "chore: update version to $VERSION"
           git push
+
+      - name: Create Tag
+        run: |
+          VERSION="${{ steps.semantic.outputs.version }}"
+          git tag "$VERSION"
+          git push origin "$VERSION"
 
       - name: Generate Changelog
         id: changelog
@@ -63,7 +54,6 @@ jobs:
           TYPE: 'feat:New Features,fix:Bug Fixes,docs:Documentation,refactor:Refactoring,perf:Performance Improvements'
 
       - name: Create Release
-        if: steps.check_manifest.outputs.update_needed == 'true'
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -80,4 +70,3 @@ jobs:
             - No configuration changes required
           draft: false
           prerelease: false
-          
