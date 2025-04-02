@@ -1,0 +1,77 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Determine Version
+        id: semantic
+        uses: paulhatch/semantic-version@v5.4.0
+        with:
+          tag_prefix: "v"
+          major_pattern: "(BREAKING CHANGE:|feat!:)"
+          minor_pattern: "feat:"
+          version_format: "${major}.${minor}.${patch}"
+          search_commit_body: true
+
+      - name: Check if manifest.json version needs updating
+        id: check_manifest
+        run: |
+          MANIFEST_VERSION=$(grep -o '"version": "[^"]*' custom_components/blynclight/manifest.json | cut -d'"' -f4)
+          SEMANTIC_VERSION="${{ steps.semantic.outputs.version }}"
+          if [ "$MANIFEST_VERSION" != "$SEMANTIC_VERSION" ]; then
+            echo "update_needed=true" >> $GITHUB_OUTPUT
+            echo "old_version=$MANIFEST_VERSION" >> $GITHUB_OUTPUT
+            echo "new_version=$SEMANTIC_VERSION" >> $GITHUB_OUTPUT
+          else
+            echo "update_needed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Update manifest.json version
+        if: steps.check_manifest.outputs.update_needed == 'true'
+        run: |
+          sed -i 's/"version": "${{ steps.check_manifest.outputs.old_version }}"/"version": "${{ steps.check_manifest.outputs.new_version }}"/g' custom_components/blynclight/manifest.json
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add custom_components/blynclight/manifest.json
+          git commit -m "chore: update version to ${{ steps.check_manifest.outputs.new_version }}"
+          git push
+
+      - name: Generate Changelog
+        id: changelog
+        uses: BobAnkh/auto-generate-changelog@v1.2.5
+        with:
+          REPO_NAME: '${{ github.repository }}'
+          ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PATH: 'CHANGELOG.md'
+          COMMIT_MESSAGE: 'docs(CHANGELOG): update release notes'
+          TYPE: 'feat:New Features,fix:Bug Fixes,docs:Documentation,refactor:Refactoring,perf:Performance Improvements'
+
+      - name: Create Release
+        if: steps.check_manifest.outputs.update_needed == 'true'
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.semantic.outputs.version }}
+          release_name: v${{ steps.semantic.outputs.version }}
+          body: |
+            ## What's Changed
+            
+            ${{ steps.changelog.outputs.changelog }}
+            
+            ## Installation & Update Notes
+            - After updating, restart Home Assistant
+            - No configuration changes required
+          draft: false
+          prerelease: false
