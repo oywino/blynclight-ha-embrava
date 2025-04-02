@@ -5,6 +5,10 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write  # Grants write access to repository contents (e.g., pushing commits)
+  pull-requests: write  # Optional: useful if you later adapt this to create PRs
+
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -13,6 +17,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}  # Explicitly use GITHUB_TOKEN for checkout
 
       - name: Determine Version
         id: semantic
@@ -75,3 +80,4 @@ jobs:
             - No configuration changes required
           draft: false
           prerelease: false
+          
