@@ -3,9 +3,11 @@
   "version": "0.1.2",
   "domain": "blynclight",
   "documentation": "https://github.com/oywino/blynclight-ha-embrava",
+  "issue_tracker": "https://github.com/oywino/blynclight-ha-embrava/issues",
   "dependencies": [],
   "codeowners": ["@oywino"],
   "requirements": ["aiohttp>=3.8.0"],
   "iot_class": "local_push",
-  "config_flow": true
+  "config_flow": true,
+  "platforms": ["select", "update"]
 }

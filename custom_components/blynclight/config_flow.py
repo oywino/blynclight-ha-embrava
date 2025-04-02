@@ -1,7 +1,7 @@
 from homeassistant import config_entries
 import voluptuous as vol
 
-DOMAIN = "blynclight"
+from .const import DOMAIN  # Import from const.py
 
 class BlynclightConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     VERSION = 1
@@ -18,3 +18,4 @@ class BlynclightConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             }),
             errors={}
         )
+        
