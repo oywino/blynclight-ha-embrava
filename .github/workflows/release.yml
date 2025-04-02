@@ -12,7 +12,7 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout Repository
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
@@ -27,21 +27,37 @@ jobs:
           version_format: "${major}.${minor}.${patch}"
           search_commit_body: true
 
-      - name: Update manifest.json version
+      - name: Check Current Version in manifest.json
+        id: check_manifest
         run: |
-          VERSION="${{ steps.semantic.outputs.version }}"
-          sed -i 's/"version": "[^"]*"/"version": "'"$VERSION"'"/' custom_components/blynclight/manifest.json
+          MANIFEST_VERSION=$(grep -o '"version": "[^"]*' custom_components/blynclight/manifest.json | cut -d'"' -f4)
+          SEMANTIC_VERSION="${{ steps.semantic.outputs.version }}"
+          if [ "$MANIFEST_VERSION" != "$SEMANTIC_VERSION" ]; then
+            echo "update_needed=true" >> $GITHUB_OUTPUT
+            echo "old_version=$MANIFEST_VERSION" >> $GITHUB_OUTPUT
+            echo "new_version=$SEMANTIC_VERSION" >> $GITHUB_OUTPUT
+          else
+            echo "update_needed=false" >> $GITHUB_OUTPUT
+
+      - name: Update and Commit manifest.json
+        if: steps.check_manifest.outputs.update_needed == 'true'
+        run: |
+          sed -i 's/"version": "${{ steps.check_manifest.outputs.old_version }}"/"version": "${{ steps.check_manifest.outputs.new_version }}"/' custom_components/blynclight/manifest.json
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add custom_components/blynclight/manifest.json
-          git commit -m "chore: update version to $VERSION"
+          git commit -m "chore: update manifest.json to v${{ steps.check_manifest.outputs.new_version }}"
           git push
+
+      - name: Wait for Commit to Sync
+        if: steps.check_manifest.outputs.update_needed == 'true'
+        run: sleep 10  # Optional: Wait to ensure push is fully processed
 
       - name: Create Tag
         run: |
           VERSION="${{ steps.semantic.outputs.version }}"
-          git tag "$VERSION"
-          git push origin "$VERSION"
+          git tag "v$VERSION"
+          git push origin "v$VERSION"
 
       - name: Generate Changelog
         id: changelog
