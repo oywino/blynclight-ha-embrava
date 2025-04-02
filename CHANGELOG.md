@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## [v0.2.0](https://github.com/oywino/blynclight-ha-embrava/releases/tag/v0.2.0) - 2025-04-02 21:28:31
+## [v0.2.1](https://github.com/oywino/blynclight-ha-embrava/releases/tag/v0.2.1) - 2025-04-02 22:12:43
 
 ## What's Changed
 
@@ -10,10 +10,7 @@
 - After updating, restart Home Assistant
 - No configuration changes required
 
-### New Features
-
-- general:
-  - add update entity for automatic version checking ([bf24691](https://github.com/oywino/blynclight-ha-embrava/commit/bf246917dc55a2c52491bfccf1c538b31922e7d1))
+## [v0.2.0](https://github.com/oywino/blynclight-ha-embrava/releases/tag/v0.2.0) - 2025-04-02 21:28:31
 
 ## [v0.1.2](https://github.com/oywino/blynclight-ha-embrava/releases/tag/v0.1.2) - 2025-04-02 21:00:13
 
